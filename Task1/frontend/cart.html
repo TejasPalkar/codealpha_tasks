@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Shopping Cart</title>
+</head>
+<body>
+  <h2>Your Cart</h2>
+  <ul id="cart-items"></ul>
+  <button onclick="checkout()">Checkout</button>
+
+  <script>
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const list = document.getElementById('cart-items');
+    cart.forEach(p => {
+      const li = document.createElement('li');
+      li.textContent = `${p.name} - $${p.price}`;
+      list.appendChild(li);
+    });
+
+    function checkout() {
+      fetch('http://localhost:5000/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: cart })
+      }).then(res => {
+        if (res.ok) {
+          alert('Order placed!');
+          localStorage.removeItem('cart');
+          location.reload();
+        }
+      });
+    }
+  </script>
+</body>
+</html>
